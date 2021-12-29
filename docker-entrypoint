@@ -54,7 +54,7 @@ restart_container() {
   local container_id="$1"
   local timeout="$2"
 
-  docker_curl -f -X POST "${HTTP_ENDPOINT}/containers/${container_id}/restart?t=${timeout}"
+  docker_curl -f -X POST "${HTTP_ENDPOINT}/containers/${container_id}/stop?t=${timeout}"
 }
 
 notify_webhook() {
@@ -73,7 +73,7 @@ generate_webhook_payload() {
   cat <<EOF
 {
   "text":"$text"
-} 
+}
 EOF
 }
 
@@ -116,7 +116,7 @@ if [ "$1" = "autoheal" ] && [ -e "$DOCKER_SOCK" ];then
         then
           echo "$DATE Restarting container $CONTAINER_SHORT_ID failed" >&2
           notify_webhook "Container ${CONTAINER_NAME:1} (${CONTAINER_SHORT_ID}) found to be unhealthy. Failed to restart the container!" &
-        else 
+        else
           notify_webhook "Container ${CONTAINER_NAME:1} (${CONTAINER_SHORT_ID}) found to be unhealthy. Successfully restarted the container!" &
         fi
       fi
